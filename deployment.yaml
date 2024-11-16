@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifi-poller
+  labels:
+    app: unifi-poller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-poller 
+  template:
+    metadata:
+      labels:
+        app: unifi-poller 
+      annotations:
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - name: unifi-poller 
+        image: brendanburns/unifi-poller:v3
+        command:
+        - /unifi-poller
+        - --config=/up.conf
+        volumeMounts:
+        - name: tz-seattle
+          mountPath: /etc/localtime
+        ports:
+        - containerPort: 9130
+      volumes:
+      - name: tz-seattle
+        hostPath:
+          path: /usr/share/zoneinfo/US/Pacific

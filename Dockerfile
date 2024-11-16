@@ -1,15 +1,6 @@
-FROM busybox:latest as builder
-# we have to do this hop because distroless is bare without common shell commands
+FROM debian:12
 
-RUN mkdir -p /etc/unpoller
-# copy over example config for cnfg environment-based default config
-COPY examples/up.conf.example /etc/unpoller/up.conf
-COPY unpoller_manual.html /etc/unpoller/manual.html
-COPY README.html /etc/unpoller/readme.html
+COPY unpoller /unpoller
+COPY up.conf /up.conf
 
-FROM gcr.io/distroless/static-debian11
-
-COPY unpoller /usr/bin/unpoller
-COPY --from=builder /etc/unpoller /etc/unpoller
-
-ENTRYPOINT [ "/usr/bin/unpoller" ]
+ENTRYPOINT [ "/unpoller" ]
